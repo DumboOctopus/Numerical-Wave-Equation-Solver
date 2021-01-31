@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 
 T = 100
 L = 10
-c = 0.2
+c = 2
 dt = 0.1
 x_space, dx = np.linspace(0, L, num=100, retstep=True)
 
@@ -38,10 +38,7 @@ def main():
 
     # using flattened normal distribution
     def f(x_space, t):
-        out = np.exp(-(x_space-L/2.0-c*t)**2)
-        for i in range(int(L/4.0/dx)):
-            out[i] = 0
-            out[len(out)-1-i] = 0
+        out = np.exp(-(x_space-5*L/8.0-c*t)**2)
         return out 
     def g(x_space, t):
         return f(x_space, t)
@@ -71,7 +68,7 @@ def main():
             u_xx[j] = u[j-1] -2*u[j] + u[j+1]
 
         # wave equation solved for u_t
-        next_u =  rsq* u_xx  + 2*u - prev_u
+        next_u = rsq* u_xx  + 2*u - prev_u
 
         # boundary conditions
         next_u[0] = 0
