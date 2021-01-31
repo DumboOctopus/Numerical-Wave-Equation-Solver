@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-T = 10
+T = 100
+L = 10
+c = 0.2
 dt = 0.1
-L = 20
-x_space, dx = np.linspace(0, L, num=500, retstep=True)
-c = 0.4 # speed of wave
+x_space, dx = np.linspace(0, L, num=100, retstep=True)
 
 
 def spatial_derivative(u, dx):
@@ -22,6 +22,14 @@ def spatial_derivative(u, dx):
 
     return np.array(out)
 
+def spatial_second(u, dx):
+    out = np.zeros(len(u))
+    for i in range(1, len(u)-1):
+    
+        out[i] = u[i-1] - 2*u[i] + u[i+1]
+
+    return out / (dx*dx)
+
 def time_derivative(u, u_old, dt):
     out = [ u[i] - u_old[i] for  i in range(len(u))]
     return np.array(out)/dt
@@ -29,7 +37,11 @@ def time_derivative(u, u_old, dt):
 def main():
     # let u_arr just be sin(x+ct) + sin(x-ct)
     def f(x_space, t):
-        return np.exp(-(x_space-L/2-t)**2)
+        out = np.exp(-(x_space-L/2.0-c*t)**2)
+        for i in range(int(L/4.0/dx)):
+            out[i] = 0
+            out[len(out)-1-i] = 0
+        return out 
     def g(x_space, t):
         return f(x_space, t)
     u_arr = [
@@ -38,6 +50,8 @@ def main():
             f(x_space, 2*dt) + g(x_space, -2*dt)
     ]
 
+    print(u_arr)
+    rsq=(c*dt/dx)**2
     t = 0
     i = 2
     while t < T:
@@ -45,25 +59,12 @@ def main():
         prev_u = u_arr[i-1]
         prev_prev_u = u_arr[i-2]
 
-        # compute derivatives
-        u_x = spatial_derivative(u, dx)
-        u_xx = spatial_derivative(u_x, dx)
+        next_u = np.zeros(len(u))
+        for a in range(1, len(u)-1): 
+            next_u[a]  = 2*(1-rsq)*u[a]-prev_u[a]+rsq*(u[a-1]+u[a+1])
 
-        # finally apply wave equation
-        u_tt = (c ** 2) * u_xx
-
-        # now that we know u_tt, find next u
-        next_u = (dt ** 2) * u_tt  + 2*prev_u - prev_prev_u
         u_arr.append(next_u)
 
-        """
-        print(i)
-        print("u_x", u_x)
-        print("u_xx", u_xx)
-        print("next_u", next_u)
-        print("u_prev", u)
-        print()
-        """
         i += 1
         t += dt
 
