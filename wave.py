@@ -35,7 +35,8 @@ def time_derivative(u, u_old, dt):
     return np.array(out)/dt
 
 def main():
-    # let u_arr just be sin(x+ct) + sin(x-ct)
+
+    # using flattened normal distribution
     def f(x_space, t):
         out = np.exp(-(x_space-L/2.0-c*t)**2)
         for i in range(int(L/4.0/dx)):
@@ -44,24 +45,37 @@ def main():
         return out 
     def g(x_space, t):
         return f(x_space, t)
+
     u_arr = [
             f(x_space, 0) + g(x_space, 0),
             f(x_space, dt) + g(x_space, -dt),
             f(x_space, 2*dt) + g(x_space, -2*dt)
     ]
 
-    print(u_arr)
     rsq=(c*dt/dx)**2
     t = 0
     i = 2
     while t < T:
         u = u_arr[i]
         prev_u = u_arr[i-1]
-        prev_prev_u = u_arr[i-2]
 
+        """
         next_u = np.zeros(len(u))
         for a in range(1, len(u)-1): 
             next_u[a]  = 2*(1-rsq)*u[a]-prev_u[a]+rsq*(u[a-1]+u[a+1])
+        """
+
+        # compute u_xx
+        u_xx = np.zeros(len(u))
+        for j in range(1, len(u_xx) -1):
+            u_xx[j] = u[j-1] -2*u[j] + u[j+1]
+
+        # wave equation solved for u_t
+        next_u =  rsq* u_xx  + 2*u - prev_u
+
+        # boundary conditions
+        next_u[0] = 0
+        next_u[len(u)-1]=0
 
         u_arr.append(next_u)
 
