@@ -4,8 +4,9 @@ from matplotlib.animation import FuncAnimation
 
 T = 100
 L = 10
+# Note, (c*dt/dx) must be less than or equal to 1, otherwise numerical disperation relation blows up :(
 c = 2
-dt = 0.1
+dt = 0.05
 x_space, dx = np.linspace(0, L, num=100, retstep=True)
 
 
@@ -75,6 +76,7 @@ def main():
         next_u[len(u)-1]=0
 
         u_arr.append(next_u)
+        print(next_u)
 
         i += 1
         t += dt
