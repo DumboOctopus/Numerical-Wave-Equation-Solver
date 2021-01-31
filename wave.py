@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 
 T = 100
 L = 10
-# Note, (c*dt/dx) must be less than or equal to 1, otherwise numerical disperation relation blows up :(
+# Note, (c*dt/dx) must be less than or equal to 1. This is necessary for stability of solution
 c = 2
 dt = 0.05
 x_space, dx = np.linspace(0, L, num=100, retstep=True)
