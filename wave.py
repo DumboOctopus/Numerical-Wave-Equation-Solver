@@ -9,7 +9,8 @@ c = 2
 dt = 0.05
 x_space, dx = np.linspace(0, L, num=100, retstep=True)
 
-
+# old code
+"""
 def spatial_derivative(u, dx):
     out = [0] * (len(u))
 
@@ -34,6 +35,7 @@ def spatial_second(u, dx):
 def time_derivative(u, u_old, dt):
     out = [ u[i] - u_old[i] for  i in range(len(u))]
     return np.array(out)/dt
+"""
 
 def main():
 
@@ -50,6 +52,7 @@ def main():
             f(x_space, 2*dt) + g(x_space, -2*dt)
     ]
 
+    # courant number squared
     rsq=(c*dt/dx)**2
     t = 0
     i = 2
@@ -57,6 +60,7 @@ def main():
         u = u_arr[i]
         prev_u = u_arr[i-1]
 
+        # another way of writing it. You can show this is the same as the equations I used
         """
         next_u = np.zeros(len(u))
         for a in range(1, len(u)-1): 
@@ -69,6 +73,8 @@ def main():
             u_xx[j] = u[j-1] -2*u[j] + u[j+1]
 
         # wave equation solved for u_t
+        # note: if the courant number is 1, the -2*u[j] from the u_xx and 
+        # the 2*u from the next_u cancel out hmm interesting
         next_u = rsq* u_xx  + 2*u - prev_u
 
         # boundary conditions
@@ -76,7 +82,6 @@ def main():
         next_u[len(u)-1]=0
 
         u_arr.append(next_u)
-        print(next_u)
 
         i += 1
         t += dt
