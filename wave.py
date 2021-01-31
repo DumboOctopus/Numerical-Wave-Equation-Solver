@@ -39,10 +39,16 @@ def time_derivative(u, u_old, dt):
 
 def main():
 
-    # using flattened normal distribution
+    # the analytical solution to the wave equation is
+    # f(x+ct) + g(x-ct)
+    # so here you can define any functions f and g and it will load those as initial
+    # values for the first 3 iterations
+
+    # using normal distribution translated to a little bit off center
     def f(x_space, t):
         out = np.exp(-(x_space-5*L/8.0-c*t)**2)
         return out 
+    # just use the same thing for g
     def g(x_space, t):
         return f(x_space, t)
 
